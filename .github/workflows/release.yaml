@@ -29,6 +29,7 @@ jobs:
           ref: "${{ github.event.release.tag }}"
       - run: rustup target add ${{ matrix.config.target }}
       - run: rustup toolchain install stable-${{ matrix.config.target }}
+      - run: rustup default stable-${{ matrix.config.target }}
       - run: cargo build --release --target ${{ matrix.config.target }}
       - run: |
           curl --request POST \
