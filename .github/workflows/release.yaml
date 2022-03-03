@@ -15,8 +15,8 @@ jobs:
             os: macos-11
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-18.04
-          - target: x86_64-pc-windows-msvc
-            os: windows-2019
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-18.04
     runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v3
@@ -30,4 +30,39 @@ jobs:
           --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/octet-stream' \
           --data-binary "@./target/${{ matrix.config.target }}/release/cli" \
+          --fail
+  build-windows:
+    strategy:
+      matrix:
+        config:
+          - target: x86_64-pc-windows-gnu
+          - target: x86_64-pc-windows-msvc
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "${{ github.event.inputs.tag }}"
+      - run: rustup target add ${{ matrix.config.target }}
+      - run: cargo build --release --target ${{ matrix.config.target }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.config.target }}
+          path: ./target/${{ matrix.config.target }}/release/cli
+  upload-windows:
+    strategy:
+      matrix:
+        config:
+          - target: x86_64-pc-windows-gnu
+          - target: x86_64-pc-windows-msvc
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.config.target }}
+      - run: |
+          curl --request POST \
+          --url https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets?name=${{ matrix.config.target }} \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/octet-stream' \
+          --data-binary "@${{ matrix.config.target }}" \
           --fail
