@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: "${{ github.event.inputs.tag }}"
+          ref: "${{ github.event.release.tag }}"
       - run: rustup target add ${{ matrix.config.target }}
       - run: cargo build --release --target ${{ matrix.config.target }}
       - run: |
@@ -39,9 +39,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: "${{ github.event.inputs.tag }}"
+          ref: "${{ github.event.release.tag }}"
       - run: rustup target add ${{ matrix.config.target }}
       - run: cargo build --release --target ${{ matrix.config.target }}
+      - run: ls
       - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.config.target }}
