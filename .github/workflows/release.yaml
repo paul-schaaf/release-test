@@ -13,6 +13,7 @@ on:
 
 jobs:
   release:
+    needs: [build-apple-x86, build-apple-aarch, build-linux-x86]
     runs-on: ubuntu-18.04
     steps:
       - name: Create release using REST API
@@ -23,6 +24,8 @@ jobs:
           --header 'content-type: application/vnd.github.v3+json' \
           --data '{"tag_name": "${{ github.event.inputs.tag }}"}' \
           --fail
+      - uses: actions/download-artifact@v3
+      - run: ls
   build-apple-x86:
     runs-on: macos-11
     steps:
