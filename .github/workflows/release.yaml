@@ -9,24 +9,23 @@ on:
     types: [published]
 
 jobs:
-  release:
-    runs-on: ubuntu-18.04
-    steps:
-      - run: sudo apt update && sudo apt install jq
-      - run: echo ${{ github.event.release.upload_url }}
-      - uses: actions/download-artifact@v3
   build-apple-x86:
     runs-on: macos-11
     steps:
+      - run: echo ${{ github.event }}
       - uses: actions/checkout@v3
         with:
           ref: "${{ github.event.inputs.tag }}"
       - run: rustup target add x86_64-apple-darwin
       - run: cargo build --release --target x86_64-apple-darwin
-      - uses: actions/upload-artifact@v2
-        with:
-          name: x86_64-apple-darwin
-          path: ./target/x86_64-apple-darwin/release/cli
+      - run: sudo apt update && sudo apt install jq
+      - run: |
+          curl --request POST \
+          --url https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets?name=x86_64-apple-darwin \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/octet-stream' \
+          --data-binary "@./target/x86_64-apple-darwin/release/cli" \
+          --fail
   build-apple-aarch:
     runs-on: macos-11
     steps:
@@ -37,7 +36,7 @@ jobs:
       - run: cargo build --release --target aarch64-apple-darwin
       - uses: actions/upload-artifact@v2
         with:
-          name: aarch64-apple-darwin
+          name: aarch64-apple-darwin.zip
           path: ./target/aarch64-apple-darwin/release/cli
   build-linux-x86:
     runs-on: ubuntu-18.04
@@ -49,5 +48,5 @@ jobs:
       - run: cargo build --release --target x86_64-unknown-linux-gnu
       - uses: actions/upload-artifact@v2
         with:
-          name: x86_64-unknown-linux-gnu
+          name: x86_64-unknown-linux-gnu.zip
           path: ./target/x86_64-unknown-linux-gnu/release/cli
