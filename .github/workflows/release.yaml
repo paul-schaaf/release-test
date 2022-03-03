@@ -49,6 +49,7 @@ jobs:
           name: ${{ matrix.config.target }}
           path: ./target/${{ matrix.config.target }}/release/cli
   upload-windows:
+    needs: build-windows
     strategy:
       matrix:
         config:
