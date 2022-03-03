@@ -45,7 +45,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.config.target }}
-          path: target\${{ matrix.config.target }}\release\cli
+          path: D:\a\release-test\release-test\target\${{ matrix.config.target }}\release\cli
           if-no-files-found: error
   upload-windows:
     needs: build-windows
