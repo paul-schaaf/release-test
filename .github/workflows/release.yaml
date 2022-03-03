@@ -19,7 +19,7 @@ jobs:
       - run: sudo apt update && sudo apt install jq
       - name: Create release using REST API
         run: |
-          upload_url = $(curl --request POST \
+          upload_url=$(curl --request POST \
           --url https://api.github.com/repos/${{ github.repository }}/releases \
           --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/vnd.github.v3+json' \
