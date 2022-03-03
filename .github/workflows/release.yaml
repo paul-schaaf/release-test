@@ -15,7 +15,14 @@ jobs:
   release:
     runs-on: ubuntu-18.04
     steps:
-      - run: 'curl -X POST -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/paul-schaaf/release-test/releases ${{ env.CURL_TAG }}'
+      - name: Create release using REST API
+        run: |
+          curl --request POST \
+          --url https://api.github.com/repos/${{ github.repository }}/releases \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/vnd.github.v3+json' \
+          --data '{"tag_name": "${{ github.event.inputs.tag }}"}' \
+          --fail
   build-apple-x86:
     runs-on: macos-11
     steps:
