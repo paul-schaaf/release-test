@@ -1,0 +1,14 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: release tag
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-18.04
+    steps:
+      - run: echo "hello"
