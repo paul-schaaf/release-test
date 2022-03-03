@@ -15,8 +15,6 @@ jobs:
             os: macos-11
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-18.04
-          - target: aarch64-unknown-linux-gnu
-            os: ubuntu-18.04
     runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v3
@@ -47,7 +45,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.config.target }}
-          path: ./target/${{ matrix.config.target }}/release/cli
+          path: \target\${{ matrix.config.target }}\release\cli
   upload-windows:
     needs: build-windows
     strategy:
