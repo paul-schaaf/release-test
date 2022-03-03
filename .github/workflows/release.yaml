@@ -1,5 +1,9 @@
 name: Release
 
+env:
+  CURL_TAG: -d '{"tag_name":"tag_name"}'
+
+
 on:
   workflow_dispatch:
     inputs:
@@ -11,7 +15,7 @@ jobs:
   release:
     runs-on: ubuntu-18.04
     steps:
-      - run: 'curl -X POST -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/paul-schaaf/release-test/releases -d \'{"tag_name":"tag_name"}\' '
+      - run: 'curl -X POST -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/paul-schaaf/release-test/releases $CURL_TAG'
   build-apple-x86:
     runs-on: macos-11
     steps:
