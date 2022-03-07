@@ -16,19 +16,17 @@ jobs:
             os: macos-11
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-18.04
-          - target: aarch64-unknown-linux-gnu
-            os: ubuntu-20.04
     runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v3
         with:
           ref: "${{ github.event.release.tag }}"
       - run: rustup target add ${{ matrix.config.target }}
-      - run: cargo build --release --target ${{ matrix.config.target }}
+      - run: cargo build --release --target ${{ matrix.config.target }} -p anchor-cli
       - run: |
           curl --request POST \
-          --url https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets?name=${{ matrix.config.target }} \
+          --url https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets?name=anchor-${{ matrix.config.target }} \
           --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/octet-stream' \
-          --data-binary "@./target/${{ matrix.config.target }}/release/cli" \
+          --data-binary "@./target/${{ matrix.config.target }}/release/anchor" \
           --fail
